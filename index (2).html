@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IPL Pressure Performer Analytics</title>
+<style>
+:root{--bg:#fff;--soft:#edf3fd;--ink:#16203a;--mute:#5a6580;--line:#d3ddf0;--g:#17327a;--red:#d4500a;--bar:#2f7de1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1426;--soft:#172040;--ink:#e8edfa;--mute:#98a4c4;--line:#2a3660;--g:#2f4fc0;--red:#ff8a4c;--bar:#5b9cf0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1426;--soft:#172040;--ink:#e8edfa;--mute:#98a4c4;--line:#2a3660;--g:#2f4fc0;--red:#ff8a4c;--bar:#5b9cf0;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--g);z-index:20}
+header{background:var(--g);color:#fff;padding:22px 28px;border-bottom:4px solid var(--red)}
+header h1{margin:0;font:700 24px/1.2 Georgia,"Times New Roman",serif}
+header p{margin:4px 0 0;font-size:13px;opacity:.85}
+.layout{display:flex;max-width:1100px;margin:0 auto;gap:34px;padding:0 28px}
+nav{width:170px;flex:none;position:sticky;top:env(safe-area-inset-top,0px);align-self:flex-start;padding:26px 0;display:flex;flex-direction:column}
+nav a{color:var(--mute);text-decoration:none;padding:7px 0 7px 12px;border-left:3px solid var(--line);font-size:14px}
+nav a:hover{color:var(--ink)}nav a.on{color:var(--ink);border-color:var(--red);font-weight:600}
+main{flex:1;min-width:0;padding:26px 0 40px}
+.view{display:none}.view.on{display:block}
+h2{font:700 25px/1.2 Georgia,"Times New Roman",serif;margin:0 0 6px;color:var(--g)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) h2{color:var(--bar)}}
+h3{font:700 15px/1.3 "Segoe UI",system-ui,sans-serif;margin:26px 0 8px;padding:2px 0 2px 10px;border-left:4px solid var(--red)}
+p{margin:0 0 10px}.sub{color:var(--mute);margin-bottom:18px}.note{color:var(--mute);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;background:var(--g);color:#fff;padding:9px 10px;font-size:13px}
+td{padding:8px 10px;border-bottom:1px solid var(--line)}
+tbody tr:nth-child(even) td{background:var(--soft)}
+.n{text-align:right;font-variant-numeric:tabular-nums}th.n{text-align:right}
+td.rk{width:42px;color:var(--mute)}
+.facts td:first-child{width:46%;color:var(--mute)}.facts td:last-child{font-weight:600}
+.cell{display:flex;gap:8px;justify-content:flex-end;align-items:center}.cell i{display:block;height:8px;background:var(--bar)}
+.scroll{overflow-x:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+ul,ol{padding-left:20px;margin:0}li{margin:4px 0}
+.f{font:13px/1.5 Consolas,"SF Mono",monospace;background:var(--soft);padding:8px 12px;margin:0 0 8px;overflow-wrap:anywhere}
+.top{background:var(--soft);border:1px solid var(--line);border-top:5px solid var(--red);border-radius:6px;padding:14px 16px}
+.top b{display:block;font:700 24px/1.2 Georgia,serif;margin:2px 0 6px}.top span{font-size:12px;color:var(--red);font-weight:700}
+.meter{height:9px;background:var(--line);margin:6px 0}.meter i{display:block;height:100%;background:var(--bar)}
+.dim{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;font-size:14px}
+.final{margin-top:26px;padding:16px 18px;background:var(--soft);border-left:4px solid var(--g);font:17px/1.55 Georgia,serif}
+svg{width:100%;height:auto;display:block;margin-top:6px}svg text{fill:var(--mute);font:11px "Segoe UI",system-ui,sans-serif}svg .l{fill:var(--ink)}svg line{stroke:var(--line)}svg circle{fill:var(--red);opacity:.85}
+footer{border-top:1px solid var(--line);color:var(--mute);font-size:12px;padding:16px 28px;text-align:center}
+@media(max-width:760px){.layout{flex-direction:column;gap:0;padding:0 16px}nav{width:auto;position:static;flex-direction:row;overflow-x:auto;padding:12px 0 0;gap:14px}nav a{border-left:0;border-bottom:3px solid var(--line);padding:6px 0;white-space:nowrap}nav a.on{border-color:var(--red)}.two{grid-template-columns:1fr}header{padding:18px 16px}.dim{grid-template-columns:100px 1fr}}
+</style>
+</head>
+<body>
+<header><h1>IPL Pressure Performer Analytics</h1><p>IPL 2022–2026 · batting and bowling performance · research and analysis by Krrish Thakkar</p></header>
+<div class="layout">
+<nav id="nav"><a href="#overview">1. Overview</a><a href="#batting">2. Batting</a><a href="#bowling">3. Bowling</a><a href="#model">4. Our model</a><a href="#validation">5. Validation</a><a href="#conclusion">6. Conclusion</a></nav>
+<main>
+
+<section class="view" id="overview">
+<h2>Project overview</h2>
+<p class="sub">Identifying the most consistent and impactful pressure performers across five IPL seasons, using ball-by-ball and match-level analysis.</p>
+<table class="facts"><tbody>
+<tr><td>Matches in scope</td><td>371 (five IPL seasons)</td></tr>
+<tr><td>Delivery records</td><td>87,687 (covered matches)</td></tr>
+<tr><td>Regular innings</td><td>730 (super overs excluded)</td></tr>
+<tr><td>Final ranked players</td><td>20 (10 batters + 10 bowlers)</td></tr>
+<tr><td>Ball-by-ball coverage</td><td>367 of 371 matches (98.92%)</td></tr></tbody></table>
+<p class="note" style="margin-top:8px">Four matches were missing ball-by-ball data.</p>
+<h3>Research objective</h3>
+<p>Go beyond traditional cricket statistics and identify players who repeatedly deliver valuable performances under difficult match situations.</p>
+<h3>Our central principle</h3>
+<p>The best pressure performer is not necessarily the player with the highest runs or wickets. Match situation, contribution, role and repeatability matter.</p>
+</section>
+
+<section class="view" id="batting">
+<h2>Batting pressure analysis</h2>
+<p class="sub">Scoring contribution, repeatability, chase difficulty and role-specific pressure performance.</p>
+<div class="two"><div class="top"><span>TOP BATTER</span><b>Shreyas Iyer</b><p class="note" style="margin:0">Selected for chase-pressure evidence and role-specific contribution.</p></div>
+<div><b>Batting considerations</b><ul><li>Total runs and strike rate</li><li>20+ score frequency</li><li>Chase situation and required rate</li><li>Wickets remaining</li><li>Role-specific contribution</li></ul></div></div>
+<h3>Final top 10 batters</h3>
+<div class="scroll"><table id="batRank"><thead><tr><th>#</th><th>Player</th><th>Primary strength</th></tr></thead><tbody></tbody></table></div>
+<h3>Selected batting statistics</h3>
+<div class="scroll"><table id="batStats"><thead><tr><th>Player</th><th class="n">Runs</th><th class="n">Matches</th><th class="n">SR</th></tr></thead><tbody></tbody></table></div>
+<p class="note" style="margin-top:8px">Raw statistics are supporting evidence, not pressure scores.</p>
+<h3>Runs against strike rate</h3><div id="batPlot"></div>
+</section>
+
+<section class="view" id="bowling">
+<h2>Bowling pressure analysis</h2>
+<p class="sub">Wickets, run prevention, dot-ball pressure and repeatability.</p>
+<div class="two"><div class="top"><span>TOP BOWLER</span><b>Jasprit Bumrah</b><p class="note" style="margin:0">Selected for run prevention, control and repeatable execution.</p></div>
+<div><b>Bowling considerations</b><ul><li>Credited wickets</li><li>Economy rate</li><li>Runs saved against expectation</li><li>Dot-ball pressure</li><li>Workload and season consistency</li></ul></div></div>
+<h3>Final top 10 bowlers</h3>
+<div class="scroll"><table id="bowlRank"><thead><tr><th>#</th><th>Player</th><th>Primary strength</th></tr></thead><tbody></tbody></table></div>
+<h3>Selected bowling statistics</h3>
+<div class="scroll"><table id="bowlStats"><thead><tr><th>Bowler</th><th class="n">Wickets</th><th class="n">Appearances</th><th class="n">Economy</th></tr></thead><tbody></tbody></table></div>
+<p class="note" style="margin-top:8px">Bowling appearances count matches in which the player bowled.</p>
+<h3>Wickets against economy</h3><div id="bowlPlot"></div>
+</section>
+
+<section class="view" id="model">
+<h2>Our analytical model</h2>
+<p class="sub">The framework combines contribution, repeatability and match context. It does not claim that an unvalidated weighted sum is a scientific score.</p>
+<div class="two"><div><h3>Batting formulas</h3>
+<p class="f">Strike Rate = (Runs / Balls Faced) × 100</p>
+<p class="f">20+ Rate = (20+ Scores / Matches) × 100</p>
+<p class="f">Required Run Rate = Runs Required / Overs Remaining</p>
+<p class="note">Wides are excluded from balls faced. Role and chase context are assessed separately.</p></div>
+<div><h3>Bowling formulas</h3>
+<p class="f">Economy = Charged Runs / (Legal Balls / 6)</p>
+<p class="f">Wicket Rate = (Credited Wickets / Legal Balls) × 24</p>
+<p class="f">Runs Saved = Expected Runs − Actual Charged Runs</p>
+<p class="f">Runs Saved per 24 = (Total Runs Saved / Legal Balls) × 24</p>
+<p class="note">Byes and leg-byes are excluded from bowler-charged runs. Non-bowler-credit dismissals are not counted as bowler wickets.</p></div></div>
+<h3>Pressure model components</h3>
+<div class="dim"><span>Match state</span><div class="meter"><i style="width:90%"></i></div></div>
+<div class="dim"><span>Repeatability</span><div class="meter"><i style="width:85%"></i></div></div>
+<div class="dim"><span>Contribution</span><div class="meter"><i style="width:95%"></i></div></div>
+<div class="dim"><span>Role context</span><div class="meter"><i style="width:80%"></i></div></div>
+<p class="note">These bars are conceptual illustrations of model dimensions, not measured weights or player scores.</p>
+<h3>How the model works</h3>
+<ol><li>Collect and audit IPL match and delivery records.</li><li>Calculate player-level batting and bowling indicators.</li><li>Identify match situations where pressure is meaningful.</li><li>Assess repeatability, role and workload.</li><li>Validate expected-runs and win-probability models.</li><li>Compare evidence and select the final rankings.</li></ol>
+</section>
+
+<section class="view" id="validation">
+<h2>Model validation</h2>
+<p class="sub">Checking whether the model’s expectations align with observed outcomes.</p>
+<h3>Expected-runs model</h3>
+<table><thead><tr><th>Test season</th><th class="n">MAE</th><th class="n">Mean bias</th></tr></thead><tbody>
+<tr><td>2023</td><td class="n">1.261</td><td class="n">+0.044</td></tr><tr><td>2024</td><td class="n">1.313</td><td class="n">+0.102</td></tr>
+<tr><td>2025</td><td class="n">1.342</td><td class="n">+0.069</td></tr><tr><td>2026</td><td class="n">1.392</td><td class="n">+0.061</td></tr></tbody></table>
+<p class="f" style="margin-top:10px">MAE = Σ |Actual − Predicted| / Number of deliveries</p>
+<p class="note">Positive bias means the model slightly overpredicted runs on average.</p>
+<h3>Other checks</h3>
+<table class="facts"><tbody>
+<tr><td>2026 win-probability AUC</td><td>0.789</td></tr><tr><td>2026 Brier score</td><td>0.190</td></tr>
+<tr><td>Bowling repeatability (Pearson correlation)</td><td>0.501</td></tr><tr><td>Wicket model AUC (approx.)</td><td>0.59</td></tr></tbody></table>
+<h3>Interpretation</h3>
+<ul><li>The expected-runs model showed relatively small average bias.</li><li>The win-probability model showed useful match-outcome discrimination.</li><li>Bowling run-prevention performance showed positive repeatability across qualifying players.</li><li>The wicket model had modest predictive power and was not used to assign highly precise wicket values.</li><li>Pressure proxies were not sufficiently validated to become one final numerical score.</li></ul>
+</section>
+
+<section class="view" id="conclusion">
+<h2>Final research conclusion</h2>
+<p class="sub">Final selections from our IPL 2022–2026 pressure-performer research.</p>
+<div class="two"><div class="top"><span>TOP BATTER</span><b>Shreyas Iyer</b><p class="note" style="margin:0">Chase-pressure evidence and role-specific contribution.</p></div>
+<div class="top"><span>TOP BOWLER</span><b>Jasprit Bumrah</b><p class="note" style="margin:0">Run prevention, control and repeatable execution.</p></div></div>
+<h3>Important limitations</h3>
+<ul><li>Four matches did not have ball-by-ball coverage.</li><li>Some extra-run classifications were ambiguous.</li><li>The expected-runs model had a small positive bias.</li><li>The 2023–2026 bowling repeatability comparison did not include 2022.</li><li>Some pressure proxies were not sufficiently validated for a unified score.</li><li>Final positions are reasoned selections, not statistically proven exact differences.</li></ul>
+<p class="final">Pressure performance is not simply about how much a player produces. It is about how consistently and effectively the player contributes when the match situation demands it.</p>
+</section>
+
+</main></div>
+<footer>IPL Pressure Performer Analytics · Krrish Thakkar</footer>
+<script>
+const BAT=[["Shreyas Iyer","Chase contribution"],["Virat Kohli","Repeatability and volume"],["Sai Sudharsan","Scoring consistency"],["Heinrich Klaasen","High-impact scoring"],["Jos Buttler","Match-changing innings"],["Shubman Gill","Sustained output"],["Rinku Singh","Finishing under pressure"],["David Miller","Pressure finishing"],["Rahul Tewatia","Finishing contributions"],["Suryakumar Yadav","Scoring impact"]];
+const BOWL=[["Jasprit Bumrah","Run prevention"],["Yuzvendra Chahal","Wicket volume"],["Sunil Narine","Economy and control"],["Rashid Khan","Wickets and workload"],["Bhuvneshwar Kumar","Wickets and repeatability"],["Varun Chakravarthy","Economy and wickets"],["Kuldeep Yadav","Wickets and run control"],["Matheesha Pathirana","Death-over impact"],["Arshdeep Singh","Wicket volume"],["Noor Ahmad","Run prevention"]];
+const BS=[["Shubman Gill",3181,76,"152.64"],["Virat Kohli",3053,76,"146.01"],["Jos Buttler",2678,72,"149.53"],["KL Rahul",2541,64,"142.91"],["Sai Sudharsan",2515,57,"149.17"],["Yashasvi Jaiswal",2304,69,"155.15"],["Suryakumar Yadav",2240,64,"164.95"],["Ishan Kishan",2148,71,"148.86"],["Abhishek Sharma",2138,69,"175.82"],["Sanju Samson",2113,69,"152.56"]];
+const WS=[["Yuzvendra Chahal",94,71,"8.82"],["Rashid Khan",86,77,"8.37"],["Bhuvneshwar Kumar",84,74,"8.61"],["Arshdeep Singh",81,72,"9.45"],["Mohammed Siraj",78,75,"9.21"],["Varun Chakravarthy",75,63,"8.31"],["Harshal Patel",73,60,"9.42"],["Kagiso Rabada",72,51,"9.58"],["Kuldeep Yadav",72,64,"8.37"],["Trent Boult",69,62,"8.68"]];
+const $=id=>document.getElementById(id);
+const rank=(id,a)=>$(id).tBodies[0].innerHTML=a.map((r,i)=>`<tr><td class="rk">${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`).join("");
+const stats=(id,a)=>{const m=a[0][1];$(id).tBodies[0].innerHTML=a.map(r=>`<tr><td>${r[0]}</td><td class="n"><div class="cell"><i style="width:${Math.round(r[1]/m*80)}px"></i>${r[1].toLocaleString("en-IN")}</div></td><td class="n">${r[2]}</td><td class="n">${r[3]}</td></tr>`).join("")};
+function plot(id,a,xl,yl){const W=560,H=300,L=46,B=36,R=14,T=12,x=a.map(r=>r[1]),y=a.map(r=>+r[3]);
+const x0=Math.min(...x)-(Math.max(...x)-Math.min(...x))*.1,x1=Math.max(...x)+(Math.max(...x)-Math.min(...x))*.25,y0=Math.min(...y)-(Math.max(...y)-Math.min(...y))*.15,y1=Math.max(...y)+(Math.max(...y)-Math.min(...y))*.15;
+const X=v=>L+(v-x0)/(x1-x0)*(W-L-R),Y=v=>H-B-(v-y0)/(y1-y0)*(H-B-T);let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${yl} against ${xl}">`;
+for(let i=0;i<=4;i++){const yv=y0+(y1-y0)*i/4,xv=x0+(x1-x0)*i/4;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(yv)}" y2="${Y(yv)}"/><text x="${L-6}" y="${Y(yv)+4}" text-anchor="end">${yv.toFixed(1)}</text><text x="${X(xv)}" y="${H-B+16}" text-anchor="middle">${Math.round(xv)}</text>`}
+s+=`<text x="${(L+W-R)/2}" y="${H-4}" text-anchor="middle">${xl}</text><text transform="translate(12 ${H/2}) rotate(-90)" text-anchor="middle">${yl}</text>`;
+a.forEach(r=>{const p=r[0].split(" "),lab=p[0].length<=2?r[0]:p[0][0]+". "+p.slice(1).join(" ");s+=`<circle cx="${X(r[1])}" cy="${Y(+r[3])}" r="4.5"/><text class="l" x="${X(r[1])+8}" y="${Y(+r[3])+4}">${lab}</text>`});$(id).innerHTML=s+"</svg>"}
+rank("batRank",BAT);rank("bowlRank",BOWL);stats("batStats",BS);stats("bowlStats",WS);
+plot("batPlot",BS,"Runs","Strike rate");plot("bowlPlot",WS,"Wickets","Economy");
+function show(){const id=(location.hash||"#overview").slice(1),e=document.getElementById(id),ok=e&&e.classList.contains("view")?id:"overview";
+document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==ok));
+document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")=="#"+ok));scrollTo(0,0)}
+addEventListener("hashchange",show);show();
+</script>
+</body>
+</html>
